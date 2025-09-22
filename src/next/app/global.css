@@ -1,0 +1,30 @@
+.header {
+    -webkit-app-region: drag;
+}
+
+/* Interactive elements inside header (e.g. buttons) */
+.noDrag {
+    -webkit-app-region: no-drag;
+}
+
+/* Global CSS for scrollbar styling */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    /* Dark background */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    /* Gray thumb */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #888;
+    /* Lighter gray when hovered */
+}

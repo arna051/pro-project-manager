@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "concurrently -k -n \"tsup,next,electron\" -c \"green,blue,magenta\" \"npm run dev:tsup\" \"npm run dev:next\" \"npm run dev:electron\"",
     "dev:tsup": "tsup --watch --config tsup.config.ts",
-    "dev:next": "next dev ./src/next",
+    "dev:next": "next dev ./src/next -p 4152",
     "dev:electron": "wait-on dist/main.cjs http://localhost:4152 && electron .",
     "build": "npm run build:electron && npm run build:next",
     "build:electron": "tsup --config tsup.config.ts",
@@ -25,12 +25,14 @@
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
     "@mui/material": "7.3.2",
+    "@mui/material-nextjs": "^7.3.2",
     "electron-is-dev": "3.0.1",
-    "next": "15.5.3",
     "mongoose": "8.0.0",
+    "next": "15.5.3",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "ssh2": "1.17.0"
+    "ssh2": "1.17.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
