@@ -37,5 +37,6 @@ export const RepoSchema = z.object({
     icon: z.array(z.string()
         .trim())
         .default([]),
-    ignore: z.string().optional()
+    ignore: z.string().optional(),
+    git: z.string().optional()
 });

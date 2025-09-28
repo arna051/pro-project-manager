@@ -26,25 +26,12 @@ const theme = createTheme({
     fontFamily: `${rubik.style.fontFamily}, ${vazirmatn.style.fontFamily}`,
   },
   colorSchemes: {
-    light: {
-      palette: {
-        background: { default: '#ffffff', paper: '#ffffff' },
-        text: { primary: '#222222', secondary: 'rgba(0,0,0,0.68)' },
-        primary: { main: '#1966e2ff', contrastText: '#ffffff' },
-        secondary: { main: '#a704e8' },
-        info: { main: '#26C6DA' },
-        success: { main: '#2E7D32' },
-        warning: { main: '#ED6C02' },
-        error: { main: '#D32F2F' },
-        divider: 'rgba(0,0,0,0.12)',
-      },
-    },
     dark: {
       palette: {
         background: { default: '#1f2024ff', paper: '#191c22ff' },
         text: { primary: '#ffffffff', secondary: 'rgba(255,255,255,0.72)' },
-        primary: { main: '#1966e2ff', contrastText: '#FFFFFF' },
-        secondary: { main: '#a704e8' },
+        primary: { main: '#27f885ff', contrastText: '#1d1d1dff' },
+        secondary: { main: '#3294e4ff' },
         info: { main: '#4DD0E1' },
         success: { main: '#66BB6A' },
         warning: { main: '#FFB74D' },

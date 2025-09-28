@@ -1,9 +1,8 @@
 import { IRepo } from "@electron/model/repo";
 import { Card, Chip, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { FsAvatar } from "@next/components/avatar";
-import { IDEButton, OpenFolder } from "@next/components/exec-button";
-import { CloneButton } from "@next/components/exec-button/clone";
-import { DeployButton } from "@next/components/exec-button/deploy";
+import { CloneButton, DeployButton, IDEButton, OpenFolder, PlayButton } from "@next/components/exec-button";
+import { GitButton } from "@next/components/exec-button/git";
 import { DeleteIcon, EditIcon } from "@next/components/icons";
 import { ICONS } from "@next/constants/repo-icons";
 import Link from "next/link";
@@ -72,8 +71,17 @@ export default function ReposTable({ repos, onDelete }: Props) {
                                     <CloneButton
                                         repositoryId={`${x._id}`}
                                     />
+                                    <GitButton
+                                        path={x.path}
+                                        title={x.title}
+                                    />
                                     <DeployButton
                                         repo={x}
+                                    />
+                                    <PlayButton
+                                        title={`dev: ${x.title}`}
+                                        command={x.devCommand}
+                                        pwd={x.path}
                                     />
                                     <OpenFolder
                                         path={x.path}

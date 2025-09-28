@@ -72,7 +72,7 @@ export default function
                         <AddIcon />
                     </IconButton>
                 </Box>
-                <Collapse in={show}>
+                <Collapse in={show && !!terminals.length}>
                     <Box sx={{
                         position: 'relative',
                         height: '100%',
@@ -87,7 +87,7 @@ export default function
                                     right: 0,
                                     bottom: 0
                                 }}>
-                                    <TerminalXterm terminal={x} />
+                                    <TerminalXterm terminal={x} close={close} />
                                 </Box>
                             </Fade>)
                         }

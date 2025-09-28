@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import type { Terminal as TType } from "../type";
 import { Terminal } from "@xterm/xterm";
 import { Box, useTheme } from "@mui/material";
+import { FitAddon } from "@xterm/addon-fit";
 
 let timeout: any = null
-export default function TerminalXterm({ terminal }: { terminal: TType }) {
+export default function TerminalXterm({ terminal, close }: { terminal: TType, close: (id: string) => any }) {
     const termRef = useRef<HTMLDivElement | null>(null);
 
     const theme = useTheme();
@@ -23,12 +24,15 @@ export default function TerminalXterm({ terminal }: { terminal: TType }) {
                 selectionBackground: "#00000010"
             },
         });
-
+        const fitAddon = new FitAddon();
+        term.loadAddon(fitAddon);
         term.open(termRef.current!);
 
+        fitAddon.fit();
         // show output from shell
         window.electron.terminal.onData(terminal.id, (data) => {
             term.write(data);
+            if (/\[Process exited\]/.test(data)) return close(terminal.id);
         });
 
         // forward keystrokes to shell

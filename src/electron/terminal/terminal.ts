@@ -4,6 +4,7 @@ import * as pty from "node-pty";
 import createBashFile from "./components/bash-file";
 import execute, { copyFiles } from "./components/execute";
 import { getGitData } from "./components/git";
+import kill from "tree-kill";
 
 
 export class TerminalKeeper {
@@ -37,8 +38,8 @@ export class TerminalKeeper {
         ipcMain.handle("create-shell", event => {
             return this.add(event)
         })
-        ipcMain.handle("remove-shell", (_, id) => {
-            this.remove(id)
+        ipcMain.handle("remove-shell", async (_, id) => {
+            return await this.remove(id)
         })
         ipcMain.handle("get-bash-file", (_, content: string) => {
             return createBashFile(content);
@@ -63,9 +64,20 @@ export class TerminalKeeper {
         return id;
     }
 
-    remove(id: string) {
-        const shell = this.terminals[id]
-        shell?.kill();
+    async remove(id: string): Promise<void> {
+        const shell = this.terminals[id];
+        if (!shell) return;
+
+        await new Promise<void>((resolve, reject) => {
+            kill(shell.pid, "SIGKILL", (err) => {
+                if (err) {
+                    console.error(`Failed to kill process ${shell.pid}:`, err);
+                    return reject(err);
+                }
+                resolve();
+            });
+        });
+
         delete this.terminals[id];
     }
 }

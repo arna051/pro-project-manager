@@ -15,6 +15,7 @@ import { getProjects } from "@next/api/projects";
 import { ICONS } from "@next/constants/repo-icons";
 import { DEPLOY_TEMPLATE } from "@next/constants/deploy";
 import { IRepo } from "@electron/model/repo";
+import { useTerminal } from "@next/terminal";
 
 
 const initial = {
@@ -25,7 +26,8 @@ const initial = {
     buildCommand: 'npm run build',
     deployScript: [],
     icon: [],
-    ignore: ['node_modules', '.git', '.vscode', 'package-lock.json', 'yarn.lock', 'build', 'dest', 'out', 'dist', '.next', 'src/next/.next'].join(", ")
+    ignore: ['node_modules', '.git', '.vscode', 'package-lock.json', 'yarn.lock', 'build', 'dest', 'out', 'dist', '.next', 'src/next/.next'].join(", "),
+    git: ''
 }
 
 
@@ -33,9 +35,12 @@ export default function RepositoriesSave() {
     const params = useSearchParams();
     const router = useRouter();
 
+    const { create } = useTerminal()
+
     const id = params.get("id");
     const cloneId = params.get("cloneId");
     const projectId = params.get("projectId");
+    const returnTo = params.get("returnTo");
 
     const [projects, setProjects] = useState<IProject[]>([])
 
@@ -67,6 +72,7 @@ export default function RepositoriesSave() {
             .update("Repo", { _id: id }, { $set: data })
             .then(() => {
                 toast.success("Repository was saved!")
+                if (returnTo) return router.push(`/projects/show?id=${returnTo}`)
                 router.push("/repos");
             })
             .catch(err => {
@@ -79,7 +85,15 @@ export default function RepositoriesSave() {
             .save("Repo", data)
             .then(async () => {
                 toast.success("Repository was saved!")
+                if (returnTo) return router.push(`/projects/show?id=${returnTo}`)
                 router.push("/repos");
+
+                const remote_repo: string = (data as any).git
+                if (remote_repo) {
+                    create("clone", `git clone "${remote_repo}" "${data.path}"`)
+                }
+
+                if (!cloneId) return;
                 try {
                     const old_repo = await window.electron.db.doc("Repo", [{ $match: { _id: cloneId } }]);
 
@@ -131,6 +145,7 @@ export default function RepositoriesSave() {
 
 
     const selectedProjectId = watch("projectId");
+    const path = watch("path");
 
     const selectedProject: IProject | undefined = projects.find(x => x._id === selectedProjectId)
     return <Box
@@ -204,6 +219,7 @@ export default function RepositoriesSave() {
                                         }}
                                     />
                                     {!!cloneId && <Field.Text name="ignore" label="Files & folder to ignore for clone." helperText="comma separated" />}
+                                    {!!path && !cloneId && !id && <Field.Text name="git" label="clone from an remote" helperText="repository in github or gitlab" />}
                                     <Field.Text name="devCommand" label="Development command" />
                                     <Field.Text name="buildCommand" label="Production Build command" />
                                 </Stack>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deployContext } from "./context";
 import { DeployType } from "./type";
 import { IRepo } from "@electron/model/repo";
@@ -18,7 +18,7 @@ export function DeployProvider({ children }: ChildProp) {
         const exists = deploys.findIndex(x => x.id === `${repo._id}`);
         if (exists >= 0) {
             setActiveTab(exists);
-            setOpen(true);
+            return setOpen(true);
         }
         window.electron.terminal.git(repo.path)
             .then(async res => {
@@ -40,6 +40,28 @@ export function DeployProvider({ children }: ChildProp) {
         setDeploys(last => last.filter(x => x.id !== id))
     }
 
+    function changeDeploy(id: string, deploy: Partial<DeployType>) {
+        setDeploys(last => {
+            const t = [...last];
+
+            const i = t.findIndex(x => x.id === id);
+
+            if (i < 0) return t;
+
+            t[i] = {
+                ...t[i],
+                ...deploy
+            }
+
+            return t
+        })
+    }
+
+    useEffect(() => {
+        if (!deploys.length) return;
+        setOpen(true);
+    }, [deploys.length])
+
     return <>
         <Provider value={{
             deploy,
@@ -60,6 +82,7 @@ export function DeployProvider({ children }: ChildProp) {
             closeDeploy={closeDeploy}
             deploys={deploys}
             setActiveTab={setActiveTab}
+            changeDeploy={changeDeploy}
         />
     </>
 }

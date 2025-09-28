@@ -1,22 +1,40 @@
 import { IRepo } from "@electron/model/repo"
 import { Card, CardContent, CardHeader, Chip, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
-import { AddIcon, DeployIcon, GitIcon, PlayIcon, RepoIcon, VscodeIcon } from "@next/components/icons"
+import { CloneButton, DeployButton, IDEButton, OpenFolder, PlayButton } from "@next/components/exec-button"
+import { AddIcon, EditIcon, RepoIcon, VscodeIcon } from "@next/components/icons"
 import { ICONS } from "@next/constants/repo-icons"
+import Link from "next/link"
+import { toast } from "sonner"
 
 type Props = {
     repos?: IRepo[]
+    projectId: string
 }
-export default function RepoProjectTable({ repos }: Props) {
+export default function RepoProjectTable({ repos, projectId }: Props) {
+
+    async function handleOpenAll() {
+        try {
+            const script = repos?.map(x => `code "${x.path}"`).join(" && ");
+            if (!script) return;
+            await window.electron.terminal.execute(script, [])
+        }
+        catch (err) {
+            toast.error(err instanceof Error ? err.message : "cannot run open all script.")
+        }
+    }
     return <Card className="glassy">
         <CardHeader
             avatar={<RepoIcon />}
             title="Repositories"
             subheader="the project parts & repositories."
             action={<>
-                <IconButton>
+                <IconButton onClick={handleOpenAll}>
                     <VscodeIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton
+                    LinkComponent={Link}
+                    href={`/repos/save?returnTo=${projectId}`}
+                >
                     <AddIcon />
                 </IconButton>
             </>}
@@ -53,18 +71,31 @@ export default function RepoProjectTable({ repos }: Props) {
                                         </TableCell>
                                         <TableCell>
                                             <Stack direction="row">
-                                                <IconButton>
-                                                    <VscodeIcon width={18} height={18} />
+                                                <IconButton
+                                                    LinkComponent={Link}
+                                                    href={`/repos/save?id=${x._id}&returnTo=${projectId}`}
+                                                    size="small"
+                                                    color="primary"
+                                                    aria-label="Edit Repo">
+                                                    <EditIcon width={18} height={18} />
                                                 </IconButton>
-                                                <IconButton>
-                                                    <DeployIcon width={18} height={18} />
-                                                </IconButton>
-                                                <IconButton>
-                                                    <GitIcon width={18} height={18} />
-                                                </IconButton>
-                                                <IconButton>
-                                                    <PlayIcon width={18} height={18} />
-                                                </IconButton>
+                                                <CloneButton
+                                                    repositoryId={`${x._id}`}
+                                                />
+                                                <DeployButton
+                                                    repo={x}
+                                                />
+                                                <PlayButton
+                                                    title={`dev: ${x.title}`}
+                                                    command={x.devCommand}
+                                                    pwd={x.path}
+                                                />
+                                                <OpenFolder
+                                                    path={x.path}
+                                                />
+                                                <IDEButton
+                                                    path={x.path}
+                                                />
                                             </Stack>
                                         </TableCell>
                                     </TableRow>)

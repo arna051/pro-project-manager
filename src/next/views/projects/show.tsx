@@ -52,7 +52,7 @@ export default function ProjectShow() {
             <Grid container spacing={2} sx={{ my: 2 }}>
                 <Grid size={{ xs: 12, md: 8 }}>
                     <Stack gap={2}>
-                        <RepoProjectTable repos={project.repos} />
+                        <RepoProjectTable repos={project.repos} projectId={`${project._id}`} />
                         <ProjectDesc value={project.description} />
                         <ProjectTodo project={project} reload={load} />
                     </Stack>

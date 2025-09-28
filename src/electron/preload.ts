@@ -27,7 +27,7 @@ contextBridge.exposeInMainWorld('electron', {
   },
   terminal: {
     create: () => ipcRenderer.invoke("create-shell"),
-    close: () => ipcRenderer.invoke("remove-shell"),
+    close: (id: string) => ipcRenderer.invoke("remove-shell", id),
     write: (id: string, input: string) => ipcRenderer.send("command-input", id, input),
     onData: (id: string, callback: (data: string) => void) => {
       ipcRenderer.on("command-output", (_, incomeId, data) => {

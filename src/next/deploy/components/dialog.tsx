@@ -4,6 +4,7 @@ import { alpha, Box, Dialog, DialogContent, DialogProps, DialogTitle, IconButton
 import { DeployType } from "../type"
 import { DeployIcon, ExitIcon } from "@next/components/icons"
 import Deploy from "./deploy";
+import { useEffect } from "react";
 
 type Props = DialogProps & {
     onClose: VoidFunction
@@ -11,8 +12,14 @@ type Props = DialogProps & {
     closeDeploy: (id: string) => void
     activeTab: number
     setActiveTab: (tab: number) => void
+    changeDeploy: (id: string, deploy: Partial<DeployType>) => void
 }
-export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab, setActiveTab, ...props }: Props) {
+export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab, setActiveTab, changeDeploy, ...props }: Props) {
+    useEffect(() => {
+        if (!deploys.length) return setActiveTab(deploys.length - 1);
+        setActiveTab(0)
+        onClose()
+    }, [deploys.length])
     return <Dialog
         onClose={onClose}
         slotProps={{
@@ -43,7 +50,19 @@ export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab,
                 })}>
                     <Tabs value={activeTab} onChange={(_, n) => setActiveTab(n)} aria-label="deploys tabs">
                         {
-                            deploys.map((x, i) => <Tab key={x.id} label={x.repo.title} value={i} />)
+                            deploys.map((x, i) => <Tab key={x.id} label={
+                                <Stack direction="row" gap={2}>
+                                    <Typography variant="caption">
+                                        {x.repo.title}
+                                    </Typography>
+                                    <Box component="span" onClick={() => {
+                                        closeDeploy(x.id)
+                                        window.electron.terminal.close(x.termId)
+                                    }}>
+                                        <ExitIcon width={16} height={16} />
+                                    </Box>
+                                </Stack>
+                            } value={i} />)
                         }
                     </Tabs>
                 </Box>
@@ -72,7 +91,7 @@ export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab,
                             maxHeight: '100%'
                         }}
                     >
-                        <Deploy deploy={deploy} />
+                        <Deploy deploy={deploy} changeDeploy={changeDeploy} />
                     </Box>
                 </Slide>)
             }

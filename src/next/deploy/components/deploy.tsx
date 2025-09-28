@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { DeployType } from "../type";
 import { Terminal } from "@xterm/xterm";
-import { Box, Button, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Stack, Switch, TextField, useTheme } from "@mui/material";
+import { Box, Button, CircularProgress, Divider, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, Select, Stack, Switch, TextField, Typography, useTheme } from "@mui/material";
 import { FitAddon } from '@xterm/addon-fit';
-import { DeployIcon } from "@next/components/icons";
+import { DeployIcon, DurationIcon, SelectIcon } from "@next/components/icons";
 import { toast } from "sonner";
 import { IServer } from "@electron/model/server";
+import { TimeDiff } from "@next/utils/time";
 
 
 let timeout: any = null
-export default function Deploy({ deploy }: { deploy: DeployType }) {
+export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, changeDeploy: (id: string, dep: Partial<DeployType>) => void }) {
     const termRef = useRef<HTMLDivElement | null>(null);
 
     const theme = useTheme();
 
     const [initiated, setInitiated] = useState(false);
+
+    const [tasks, setTasks] = useState<string[]>([]);
+
     const [form, setForm] = useState({
         selectedBranch: deploy.currentBranch,
         build: true,
@@ -23,22 +27,33 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
         deployScriptIndex: 0
     });
 
+    const update = (x: Partial<DeployType>) => changeDeploy(deploy.id, x)
+    const task = (s: string) => `echo "\n[project-manager] ${s}\n"`;
+    const getTask = (s: string) => /\[project\-manager\] (.+)/g.exec(s)?.[1] || ""
 
     async function handleDeploy() {
 
-        const deployScript = deploy.repo.deployScript[form.deployScriptIndex];;
+        setTasks([])
+
+        const deployScript = deploy.repo.deployScript[form.deployScriptIndex];
 
         if (!deployScript) return toast.warning("this repository doesn't have any deploy script.");
 
+        update({ deploying: true, startTime: Date.now(), endTime: undefined })
         const bash = [
             `cd "${deploy.repo.path}"`,
-            'echo "Start Deploying"',
+            task("Start Deploying"),
+            task(`changing branch to ${form.selectedBranch}`),
             `git checkout ${form.selectedBranch}`,
             'git add .',
+            task(`commit changes ${new Date().toString()}`),
             `git commit -m "deploy at ${new Date().toString()}"`,
+            form.push ? task(`pushing to origin/${form.selectedBranch}`) : '',
             form.push ? `git push origin ${form.selectedBranch}` : 'echo "skip pushing change to origin"',
+            form.build ? task(`building production mode via "${deploy.repo.buildCommand}"`) : '',
+            form.build ? deploy.repo.buildCommand : 'echo "skip building..."',
             form.initialCommand,
-            'echo "deploying by repo scripts..."'
+            task("deploying by repo scripts...")
         ];
 
         if (deployScript.serverIds.length) {
@@ -49,11 +64,11 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
 
                 if (!server) continue;
 
-                const bashScript = deployScript.script.replace(/\$1/g, `${server.user}@${server.host}`);
+                const bashScript = deployScript.script.replace(/\$1/g, `${server.user}@${server.host} -p ${server.port}`);
 
-                bash.push(`echo "Deploy on ${server.title} - [${server.user}@${server.host} -p ${server.port}]"`);
+                bash.push(task(`Deploy on ${server.title} - [${server.user}@${server.host} -p ${server.port}]`));
                 bash.push(bashScript);
-                bash.push(`echo "Deployed on ${server.title}"`);
+                bash.push(task(`Deployed on ${server.title}`));
             }
         } else {
             bash.push(deployScript.script)
@@ -64,7 +79,7 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
             "echo '\n'",
             "echo '\n'",
             "echo '\n'",
-            "echo 'deployment task is done'"
+            task("deployment task is done")
         );
 
 
@@ -97,6 +112,15 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
         // show output from shell
         window.electron.terminal.onData(deploy.termId, (data) => {
             term.write(data);
+            if (data.includes("deployment task is done")) {
+                update({ deploying: false, endTime: Date.now() })
+            }
+            const taskDone = getTask(data);
+            if (taskDone) setTasks(last => {
+                if (last.some(x => x === taskDone)) return last;
+
+                return [...last, taskDone]
+            })
         });
 
         // forward keystrokes to shell
@@ -132,8 +156,15 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
 
     return (
         <Grid container spacing={1} sx={{ height: '100%' }}>
-            <Grid size={{ xs: 12, md: 4 }}>
-                <Box sx={{ px: 4, py: 2, height: '100%', position: 'relative', pb: 8 }}>
+            <Grid size={{ xs: 12, md: 4 }} sx={{ height: '100%', position: 'relative' }}>
+                <Box sx={{
+                    px: 4,
+                    py: 2,
+                    height: '100%',
+                    overflowY: 'scroll',
+                    position: 'relative',
+                    pb: 12
+                }}>
                     <Stack gap={2}>
                         <FormControl fullWidth>
                             <InputLabel id="selected-branch-label">Selected Branch</InputLabel>
@@ -177,22 +208,45 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
                         />
                     </Stack>
 
-                    <Button
-                        sx={{
-                            position: 'absolute',
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            m: 4
-                        }}
-                        variant="contained"
-                        color="warning"
-                        startIcon={<DeployIcon />}
-                        onClick={handleDeploy}
-                    >
-                        Start Deploy!
-                    </Button>
+                    <Divider sx={{ my: 2 }} />
+
+                    <Stack gap={1}>
+                        {
+                            tasks.map((x, i) => <Stack key={i} direction="row" alignItems="center" gap={1}>
+                                <SelectIcon width={16} height={16} />
+                                <Typography fontSize={12}>{x}</Typography>
+                            </Stack>)
+                        }
+                        {
+                            !!deploy.deploying && <Stack direction="row" alignItems="center" gap={1}>
+                                <CircularProgress size={13} thickness={5} color="warning" />
+                                <Typography fontSize={12} color="warning.main">Working...</Typography>
+                            </Stack>
+                        }
+                        {
+                            !!(deploy.startTime && deploy.endTime) && <Stack direction="row" alignItems="center" gap={1}>
+                                <DurationIcon width={16} height={16} />
+                                <Typography fontSize={12}>{TimeDiff(deploy.startTime, deploy.endTime)}</Typography>
+                            </Stack>
+                        }
+                    </Stack>
                 </Box>
+
+                <Button
+                    sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        m: 4
+                    }}
+                    variant="contained"
+                    color="warning"
+                    startIcon={<DeployIcon />}
+                    onClick={handleDeploy}
+                >
+                    Start Deploy!
+                </Button>
             </Grid>
             <Grid size={{ xs: 12, md: 8 }}>
                 <Box

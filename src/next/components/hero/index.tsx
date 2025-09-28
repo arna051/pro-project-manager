@@ -15,9 +15,10 @@ type Props = {
         icon?: ReactNode
         href?: string
     }
+    actions?: ReactNode
     reset?: VoidFunction
 }
-export default function Hero({ icon: Icon, subtitle, title, button, reset }: Props) {
+export default function Hero({ icon: Icon, subtitle, title, button, reset, actions }: Props) {
     return <Stack
         direction="row"
         gap={2}
@@ -51,6 +52,7 @@ export default function Hero({ icon: Icon, subtitle, title, button, reset }: Pro
         </Stack>
 
         <Stack direction="row" gap={2} alignItems="center" justifyContent="end">
+            {actions}
             {
                 !!reset && <Button onClick={reset}>
                     Reset
