@@ -56,7 +56,7 @@ export function GitButton({ path, size = 18, title }: Props) {
             LinkComponent="a"
             href="#"
             onClick={() => {
-                const push = `cd "${path}" && git add . && git commit -m "${new Date().toString()}" && git push origin --all; exit`;
+                const push = `cd "${path}" && git add . && git commit -m "${new Date().toString()}" && git push origin --all; sleep 13 && exit`;
                 create(title, push)
             }}
         />
