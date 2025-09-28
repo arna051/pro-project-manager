@@ -12,7 +12,7 @@ export default function RepoHero() {
         for (let index = 0; index < btns.length; index++) {
             const b = btns[index];
             b.click();
-            await new Promise(res => setTimeout(res, 2e3))
+            await new Promise(res => setTimeout(res, 3e3))
         }
     }
     return <Hero
