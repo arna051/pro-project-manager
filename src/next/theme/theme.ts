@@ -1,6 +1,6 @@
 'use client';
 
-import { createTheme } from '@mui/material/styles';
+import { alpha, createTheme } from '@mui/material/styles';
 import { Rubik, Vazirmatn } from 'next/font/google';
 
 const rubik = Rubik({
@@ -21,6 +21,7 @@ const LINK_COLOR = 'hsl(210, 100%, 66%)';
 
 const theme = createTheme({
   shape: { borderRadius: 12 },
+  defaultColorScheme: "dark",
   typography: {
     fontFamily: `${rubik.style.fontFamily}, ${vazirmatn.style.fontFamily}`,
   },
@@ -70,6 +71,22 @@ const theme = createTheme({
       defaultProps: {
         color: 'inherit',
       },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          '&.glassy': {
+
+            backgroundColor: alpha(theme.palette.background.paper, .25),
+            backdropFilter: 'blur(7px)',
+          },
+          '&.glassy-dark': {
+
+            backgroundColor: alpha("#000000", .45),
+            backdropFilter: 'blur(10px)',
+          }
+        })
+      }
     },
     MuiCssBaseline: {
       styleOverrides: () => ({

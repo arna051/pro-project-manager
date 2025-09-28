@@ -1,5 +1,5 @@
 import { NavItem } from "layouts/components/type";
-import { DashboardIcon, ProjectIcon, RepoIcon, ServerIcon } from "components/icons";
+import { ContractorsIcon, DashboardIcon, ProjectIcon, RepoIcon, ServerIcon } from "components/icons";
 
 export const MainNav: NavItem[] = [
     {
@@ -21,10 +21,16 @@ export const MainNav: NavItem[] = [
         secondary: "Check Your repositories"
     },
     {
-        href: "/server",
+        href: "/servers",
         icon: <ServerIcon />,
         primary: "Servers",
         secondary: "Server management"
+    },
+    {
+        href: "/contractors",
+        icon: <ContractorsIcon />,
+        primary: "Contractors",
+        secondary: "your customers & partners"
     }
 ]
 

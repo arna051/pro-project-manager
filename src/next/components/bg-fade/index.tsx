@@ -4,20 +4,35 @@ import img1 from "../../assets/1358310.png";
 import img2 from "../../assets/coder-programming-computer-screen-computer.jpg";
 import img3 from "../../assets/coding-background-9izlympnd0ovmpli.jpg";
 import { useEffect, useState } from "react";
+import { SETTINGS } from "@next/constants/settings";
+import { FsAvatar } from "../avatar";
 
 
 type Props = {
     height: string | number
 
     images?: string[]
+
+    opacity?: number
 }
-export default function BGFade({ height, images = [img1.src, img2.src, img3.src] }: Props) {
+
+function loadImages() {
+    if (typeof window === 'undefined') return [img1.src, img2.src, img3.src]
+    const images = localStorage.getItem(SETTINGS.backgrounds) ? JSON.parse(localStorage.getItem(SETTINGS.backgrounds) || "[]") : [];
+    return images.length ? images : [img1.src, img2.src, img3.src]
+}
+function isFsGrid() {
+    if (typeof window === 'undefined') return false
+    const images = localStorage.getItem(SETTINGS.backgrounds) ? JSON.parse(localStorage.getItem(SETTINGS.backgrounds) || "[]") : [];
+    return !!images.length
+}
+export default function BGFade({ height, images = loadImages(), opacity = .5 }: Props) {
     const [step, setStep] = useState(images.length - 1);
 
     useEffect(() => {
         const interval = setInterval(() => {
             setStep(x => x === images.length - 1 ? 0 : x + 1)
-        }, 2e3);
+        }, 3e3);
         return () => clearInterval(interval);
     }, [])
     return <Box sx={{
@@ -32,7 +47,8 @@ export default function BGFade({ height, images = [img1.src, img2.src, img3.src]
         {
             images.map((x, i) => <Fade in={step === i} key={x} timeout={1e3}>
                 <Box
-                    component="img"
+                    component={isFsGrid() ? FsAvatar : "img"}
+                    variant="square"
                     src={x}
                     alt="bg"
                     sx={{
@@ -54,7 +70,7 @@ export default function BGFade({ height, images = [img1.src, img2.src, img3.src]
             right: 0,
             left: 0,
             bottom: 0,
-            opacity: .5,
+            opacity,
             bgcolor: 'background.paper'
         }} />
     </Box>

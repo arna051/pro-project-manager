@@ -4,10 +4,10 @@ import isDev from 'electron-is-dev';
 
 export const createMainWindow = () => {
     const mainWindow = new BrowserWindow({
-        width: 1200,
+        width: 1300,
         height: 800,
-        minWidth: 960,
-        minHeight: 640,
+        minWidth: 1024,
+        minHeight: 768,
         show: false,
         transparent: true,
         frame: false,

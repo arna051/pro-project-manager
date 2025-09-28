@@ -1,23 +1,33 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
+import { IContractor } from './contractor';
+import { IRepo } from './repo';
+import { IServer } from './server';
+import { ICategory } from './category';
 
 export interface ITodo {
     task: string;
     date: Date;
     priority: number;
+    done?: boolean
 }
 
 export interface IProject extends Document {
     title: string;
     image: string;
     todos: ITodo[];
+    priority: number;
     contractorIds: Types.ObjectId[];
     lastCheck: Date;
     serversIds: Types.ObjectId[];
     description?: string;
     categoryIds: Types.ObjectId[];
-    repositoryIds: Types.ObjectId[];
     createdAt: Date;
     updatedAt: Date;
+
+    contractors?: IContractor[]
+    repos?: IRepo[]
+    servers?: IServer[]
+    categories?: ICategory[]
 }
 
 const todoSchema = new Schema<ITodo>({
@@ -36,6 +46,9 @@ const todoSchema = new Schema<ITodo>({
         min: 1,
         max: 10,
         default: 5
+    },
+    done: {
+        type: Boolean
     }
 });
 
@@ -50,6 +63,13 @@ const projectSchema = new Schema<IProject>({
         type: String,
         required: true,
         trim: true
+    },
+    priority: {
+        type: Number,
+        min: 0,
+        max: 5,
+        default: 0,
+        required: true,
     },
     todos: [todoSchema],
     contractorIds: [{
@@ -72,10 +92,6 @@ const projectSchema = new Schema<IProject>({
     categoryIds: [{
         type: Schema.Types.ObjectId,
         ref: 'Category'
-    }],
-    repositoryIds: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Repository'
     }]
 }, {
     timestamps: true

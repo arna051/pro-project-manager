@@ -7,6 +7,7 @@ import menuImage from "../../assets/menu.jpg"
 import Drawer from "./drawer";
 import { FleshLeftIcon, FleshRightIcon } from "components/icons";
 import useLocalStorage from "hooks/useLocalstorage";
+import TerminalProvider from "@next/terminal/provider";
 
 type Props = ChildProp
 export default function SideBar({ children }: Props) {
@@ -14,7 +15,7 @@ export default function SideBar({ children }: Props) {
     const { setMode } = useColorScheme();
 
     const [drawerWidth, setDrawerWidth] = useLocalStorage({
-        default: 300,
+        default: 60,
         key: 'drawerWidth',
         type: Number,
     })
@@ -30,14 +31,19 @@ export default function SideBar({ children }: Props) {
                 sx={{
                     minWidth: drawerWidth,
                     maxHeight: '100%',
-                    pt: 6,
                     overflowY: 'scroll',
                     position: 'relative',
                     transition: 'all .3s ease'
                 }}
             >
 
-                <Drawer flat={drawerWidth !== 300} />
+                <Box sx={{
+                    maxHeight: '100%',
+                    pt: 6,
+                    overflowY: 'scroll',
+                }}>
+                    <Drawer flat={drawerWidth !== 300} />
+                </Box>
                 <Box sx={{
                     position: 'absolute',
                     top: 0,
@@ -55,7 +61,7 @@ export default function SideBar({ children }: Props) {
                     right: 0,
                     left: 0,
                     bottom: 0,
-                    opacity: .7,
+                    opacity: .5,
                     zIndex: -1,
                     bgcolor: 'background.paper'
                 }} />
@@ -75,12 +81,23 @@ export default function SideBar({ children }: Props) {
                     }
                 </IconButton>
             </Box>
-            <Box component="main" sx={{
+            <Box sx={{
                 flex: '1 1 auto',
                 overflowY: 'scroll',
-                maxHeight: '100%'
+                maxHeight: '100%',
+                position: 'relative'
             }}>
-                {children}
+                <TerminalProvider>
+
+                    <Box component="main" sx={{
+                        overflowY: 'scroll',
+                        maxHeight: '100%',
+                        position: 'relative',
+                        height: '100%'
+                    }}>
+                        {children}
+                    </Box>
+                </TerminalProvider>
             </Box>
         </Stack>
     </Box>

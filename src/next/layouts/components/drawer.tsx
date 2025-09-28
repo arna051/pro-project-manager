@@ -8,8 +8,7 @@ import { NavItem } from "./type";
 import { MainNav } from "layouts/constants/main";
 import { usePathname } from "next/navigation";
 import { SecondaryNav } from "layouts/constants/personal";
-import { CloudIcon, InfoIcon } from "components/icons";
-import { FsNav } from "layouts/constants/fs";
+import { InfoIcon } from "components/icons";
 import { OthersNav } from "layouts/constants/other";
 
 export default function Drawer({ flat }: { flat: boolean }) {
@@ -30,15 +29,6 @@ export default function Drawer({ flat }: { flat: boolean }) {
         >
             {
                 SecondaryNav.map(item => flat ? <SectionLinkFlat item={item} key={item.href} /> : <SectionLink item={item} key={item.href} />)
-            }
-        </Section>
-        <Section
-            icon={<CloudIcon width={18} height={18} />}
-            title="Cloud"
-            flat={flat}
-        >
-            {
-                FsNav.map(item => flat ? <SectionLinkFlat item={item} key={item.href} /> : <SectionLink item={item} key={item.href} />)
             }
         </Section>
         <Section
