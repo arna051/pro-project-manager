@@ -51,7 +51,7 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
 
                 const bashScript = deployScript.script.replace(/\$1/g, `${server.user}@${server.host} -p ${server.port}`);
 
-                bash.push(`echo "Deploy on ${server.title}"`);
+                bash.push(`echo "Deploy on ${server.title} - [${server.user}@${server.host} -p ${server.port}]"`);
                 bash.push(bashScript);
                 bash.push(`echo "Deployed on ${server.title}"`);
             }
