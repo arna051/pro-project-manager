@@ -51,9 +51,8 @@ export default function Deploy({ deploy }: { deploy: DeployType }) {
 
                 const bashScript = deployScript.script.replace(/\$1/g, `${server.user}@${server.host} -p ${server.port}`);
 
-                const bashFile = await window.electron.terminal.createBash(bashScript)
                 bash.push(`echo "Deploy on ${server.title}"`);
-                bash.push(`bash ${bashFile}`);
+                bash.push(bashScript);
                 bash.push(`echo "Deployed on ${server.title}"`);
             }
         } else {
