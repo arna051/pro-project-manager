@@ -163,10 +163,10 @@ export default function Deploy({ deploy, changeDeploy, close }: { deploy: Deploy
         if (!(deploy.startTime && deploy.endTime)) return;
         const t = setTimeout(() => {
             close()
-        }, 1e3 * 10);
+        }, 1e3 * 60);
 
         return () => clearTimeout(t)
-    }, [])
+    }, [deploy.startTime, deploy.endTime])
     return (
         <Grid container spacing={1} sx={{ height: '100%' }}>
             <Grid size={{ xs: 12, md: 4 }} sx={{ height: '100%', position: 'relative' }}>
