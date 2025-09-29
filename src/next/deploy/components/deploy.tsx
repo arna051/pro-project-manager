@@ -10,7 +10,7 @@ import { TimeDiff } from "@next/utils/time";
 
 
 let timeout: any = null
-export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, changeDeploy: (id: string, dep: Partial<DeployType>) => void }) {
+export default function Deploy({ deploy, changeDeploy, close }: { deploy: DeployType, changeDeploy: (id: string, dep: Partial<DeployType>) => void, close: VoidFunction }) {
     const termRef = useRef<HTMLDivElement | null>(null);
 
     const theme = useTheme();
@@ -159,6 +159,14 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
         }, 1e3);
     }, [termRef.current]);
 
+    useEffect(() => {
+        if (!(deploy.startTime && deploy.endTime)) return;
+        const t = setTimeout(() => {
+            close()
+        }, 1e3 * 10);
+
+        return () => clearTimeout(t)
+    }, [])
     return (
         <Grid container spacing={1} sx={{ height: '100%' }}>
             <Grid size={{ xs: 12, md: 4 }} sx={{ height: '100%', position: 'relative' }}>

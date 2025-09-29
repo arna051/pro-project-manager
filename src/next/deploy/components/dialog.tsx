@@ -110,7 +110,10 @@ export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab,
                             maxHeight: '100%'
                         }}
                     >
-                        <Deploy deploy={deploy} changeDeploy={changeDeploy} />
+                        <Deploy deploy={deploy} changeDeploy={changeDeploy} close={() => {
+                            closeDeploy(deploy.id)
+                            window.electron.terminal.close(deploy.termId)
+                        }} />
                     </Box>
                 </Slide>)
             }
