@@ -14,26 +14,38 @@ export function DeployProvider({ children }: ChildProp) {
     const [open, setOpen] = useState(false)
     const [activeTab, setActiveTab] = useState(0);
 
-    function deploy(repo: IRepo) {
+    async function deploy(repo: IRepo) {
         const exists = deploys.findIndex(x => x.id === `${repo._id}`);
         if (exists >= 0) {
             setActiveTab(exists);
             return setOpen(true);
         }
-        window.electron.terminal.git(repo.path)
-            .then(async res => {
-                const termId = await window.electron.terminal.create();
-                setDeploys(last => [...last, {
-                    id: repo._id.toString(),
-                    termId,
-                    branches: res.branches,
-                    dirty: res.dirty,
-                    currentBranch: res.currentBranch,
-                    deploying: false,
-                    repo
-                }])
-            })
-            .catch(err => toast.error(err instanceof Error ? err.message : "failed to get repo git data"));
+        try {
+            const res = await window.electron.terminal.git(repo.path)
+            const termId = await window.electron.terminal.create();
+            setDeploys(last => [...last, {
+                id: repo._id.toString(),
+                termId,
+                branches: res.branches,
+                dirty: res.dirty,
+                currentBranch: res.currentBranch,
+                deploying: false,
+                repo
+            }])
+        }
+        catch (err) {
+            toast.error(err instanceof Error ? err.message : "failed to get repo git data")
+            const termId = await window.electron.terminal.create();
+            setDeploys(last => [...last, {
+                id: repo._id.toString(),
+                termId,
+                branches: [],
+                dirty: false,
+                currentBranch: '',
+                deploying: false,
+                repo
+            }])
+        }
     }
 
     function closeDeploy(id: string) {

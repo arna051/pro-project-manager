@@ -40,9 +40,8 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
         if (!deployScript) return toast.warning("this repository doesn't have any deploy script.");
 
         update({ deploying: true, startTime: Date.now(), endTime: undefined })
-        const bash = [
-            `cd "${deploy.repo.path}"`,
-            task("Start Deploying"),
+
+        const git = deploy.branches.length ? [
             task(`changing branch to ${form.selectedBranch}`),
             `git checkout ${form.selectedBranch}`,
             'git add .',
@@ -50,6 +49,12 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
             `git commit -m "deploy at ${new Date().toString()}"`,
             form.push ? task(`pushing to origin/${form.selectedBranch}`) : '',
             form.push ? `git push origin ${form.selectedBranch}` : 'echo "skip pushing change to origin"',
+        ] : []
+
+        const bash = [
+            `cd "${deploy.repo.path}"`,
+            task("Start Deploying"),
+            ...git,
             form.build ? task(`building production mode via "${deploy.repo.buildCommand}"`) : '',
             form.build ? deploy.repo.buildCommand : 'echo "skip building..."',
             form.initialCommand,
@@ -166,7 +171,7 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
                     pb: 12
                 }}>
                     <Stack gap={2}>
-                        <FormControl fullWidth>
+                        {!!deploy.branches.length && <FormControl fullWidth>
                             <InputLabel id="selected-branch-label">Selected Branch</InputLabel>
                             <Select
                                 labelId="selected-branch-label"
@@ -177,7 +182,7 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
                                     deploy.branches.map(x => <MenuItem key={x} value={x}>{x}</MenuItem>)
                                 }
                             </Select>
-                        </FormControl>
+                        </FormControl>}
                         <FormControl fullWidth>
                             <InputLabel id="selected-deploy-label">Deploy Script</InputLabel>
                             <Select labelId="selected-deploy-label"
@@ -202,10 +207,12 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
                             label="Build before deploy"
                             control={<Switch checked={form.build} onChange={(_, x) => setForm(last => ({ ...last, build: x }))} />}
                         />
-                        <FormControlLabel
-                            label="Push to remote"
-                            control={<Switch checked={form.push} onChange={(_, x) => setForm(last => ({ ...last, push: x }))} />}
-                        />
+                        {
+                            !!deploy.branches.length && <FormControlLabel
+                                label="Push to remote"
+                                control={<Switch checked={form.push} onChange={(_, x) => setForm(last => ({ ...last, push: x }))} />}
+                            />
+                        }
                     </Stack>
 
                     <Divider sx={{ my: 2 }} />
@@ -244,6 +251,7 @@ export default function Deploy({ deploy, changeDeploy }: { deploy: DeployType, c
                     color="warning"
                     startIcon={<DeployIcon />}
                     onClick={handleDeploy}
+                    className="start-deploy-button"
                 >
                     Start Deploy!
                 </Button>

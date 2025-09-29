@@ -1,7 +1,7 @@
 import { IRepo } from "@electron/model/repo";
 
 export interface DeployContextType {
-    deploy: (repo: IRepo) => void
+    deploy: (repo: IRepo) => any
     isDeploying: (repo: IRepo) => [boolean, boolean]
     open: VoidFunction
     deploying: number

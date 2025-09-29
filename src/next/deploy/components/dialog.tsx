@@ -1,6 +1,6 @@
 "use client";
 
-import { alpha, Box, Dialog, DialogContent, DialogProps, DialogTitle, IconButton, Slide, Stack, Tab, Tabs, Typography } from "@mui/material"
+import { alpha, Box, Button, Dialog, DialogContent, DialogProps, DialogTitle, IconButton, Slide, Stack, Tab, Tabs, Typography } from "@mui/material"
 import { DeployType } from "../type"
 import { DeployIcon, ExitIcon } from "@next/components/icons"
 import Deploy from "./deploy";
@@ -15,11 +15,27 @@ type Props = DialogProps & {
     changeDeploy: (id: string, deploy: Partial<DeployType>) => void
 }
 export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab, setActiveTab, changeDeploy, ...props }: Props) {
+
+    async function deploy() {
+        const elements = window.document.querySelectorAll<HTMLButtonElement>("button.start-deploy-button");
+        const btns = Array.from(elements);
+
+        for (let index = 0; index < btns.length; index++) {
+            const b = btns[index];
+            b.click();
+            setActiveTab(index)
+            await new Promise(res => setTimeout(res, 2e3))
+        }
+    }
+
+
     useEffect(() => {
         if (!deploys.length) return setActiveTab(deploys.length - 1);
         setActiveTab(0)
         onClose()
     }, [deploys.length])
+
+
     return <Dialog
         onClose={onClose}
         slotProps={{
@@ -66,6 +82,9 @@ export default function DeployDialog({ onClose, deploys, closeDeploy, activeTab,
                         }
                     </Tabs>
                 </Box>
+                <Button color="warning" startIcon={<DeployIcon />} variant="contained" onClick={deploy}>
+                    Deploy All
+                </Button>
                 <IconButton onClick={onClose as any}>
                     <ExitIcon width={24} height={24} />
                 </IconButton>

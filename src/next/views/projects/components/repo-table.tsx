@@ -1,7 +1,8 @@
 import { IRepo } from "@electron/model/repo"
 import { Card, CardContent, CardHeader, Chip, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import { CloneButton, DeployButton, IDEButton, OpenFolder, PlayButton } from "@next/components/exec-button"
-import { AddIcon, EditIcon, RepoIcon, VscodeIcon } from "@next/components/icons"
+import { GitButton } from "@next/components/exec-button/git"
+import { AddIcon, DeployIcon, EditIcon, GitIcon, RepoIcon, VscodeIcon } from "@next/components/icons"
 import { ICONS } from "@next/constants/repo-icons"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -22,12 +23,40 @@ export default function RepoProjectTable({ repos, projectId }: Props) {
             toast.error(err instanceof Error ? err.message : "cannot run open all script.")
         }
     }
+
+    async function sync() {
+        const elements = window.document.querySelectorAll<HTMLLinkElement>("a.git-button");
+        const btns = Array.from(elements);
+
+        for (let index = 0; index < btns.length; index++) {
+            const b = btns[index];
+            b.click();
+            await new Promise(res => setTimeout(res, 3e3))
+        }
+    }
+    async function deploy() {
+        const elements = window.document.querySelectorAll<HTMLLinkElement>("a.deploy-button");
+        const btns = Array.from(elements);
+
+        for (let index = 0; index < btns.length; index++) {
+            const b = btns[index];
+            b.click();
+            await new Promise(res => setTimeout(res, 2e3))
+        }
+    }
+
     return <Card className="glassy">
         <CardHeader
             avatar={<RepoIcon />}
             title="Repositories"
             subheader="the project parts & repositories."
             action={<>
+                <IconButton onClick={sync}>
+                    <GitIcon />
+                </IconButton>
+                <IconButton onClick={deploy}>
+                    <DeployIcon />
+                </IconButton>
                 <IconButton onClick={handleOpenAll}>
                     <VscodeIcon />
                 </IconButton>
@@ -81,6 +110,10 @@ export default function RepoProjectTable({ repos, projectId }: Props) {
                                                 </IconButton>
                                                 <CloneButton
                                                     repositoryId={`${x._id}`}
+                                                />
+                                                <GitButton
+                                                    path={x.path}
+                                                    title={x.title}
                                                 />
                                                 <DeployButton
                                                     repo={x}
