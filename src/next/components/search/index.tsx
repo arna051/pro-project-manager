@@ -3,7 +3,7 @@ import { Theme, useTheme } from "@mui/material/styles";
 import { SearchIcon } from "components/icons";
 
 type Props = InputProps
-export default function SearchBox(props: Props) {
+export default function SearchBox({ dis = 1, ...props }: Props & { dis?: number }) {
 
     const theme = useTheme()
 
@@ -12,7 +12,9 @@ export default function SearchBox(props: Props) {
     return <Box
         sx={{
             position: 'relative',
-            width: 400
+            maxWidth: 400,
+            width: '100%',
+            my: dis
         }}
     >
         <Stack

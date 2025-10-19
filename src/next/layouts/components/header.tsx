@@ -3,7 +3,7 @@
 import { AppBar, Badge, Box, CircularProgress, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import { DeployIcon, ExitIcon, MinesIcon } from "components/icons";
 import Image from "next/image";
-import logo from "../assets/logo-512.png"
+import logo from "@next/assets/hippogriff.png"
 import { useDeploy } from "@next/deploy/context";
 
 export default function Header() {
@@ -50,12 +50,12 @@ export default function Header() {
                 </Stack>
             }
             <Stack direction="row" alignItems="center">
-                <IconButton className="noDrag" sx={{
+                <IconButton className="noDrag" onClick={() => window.electron.browser.min()} sx={{
                     borderRadius: 0,
                 }}>
                     <MinesIcon width={18} height={18} />
                 </IconButton>
-                <IconButton className="noDrag" sx={{
+                <IconButton className="noDrag" onClick={() => window.electron.browser.exit()} sx={{
                     borderRadius: 0,
                     ':hover': {
                         bgcolor: 'error.main'

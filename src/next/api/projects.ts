@@ -2,6 +2,11 @@ import { IProject } from "@electron/model/project";
 
 const pipeline = [
     {
+        $sort: {
+            lastCheck: -1 as const
+        }
+    },
+    {
         $lookup: {
             as: "contractors",
             from: "contractors",

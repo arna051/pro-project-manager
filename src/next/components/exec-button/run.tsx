@@ -50,8 +50,11 @@ export default function RunButton({ command, size = 18, title }: Props) {
                     else toast.warning("terminal is not configured in settings")
                     break;
 
-                default:
+                case "internal":
                     create(title, `${bash}`)
+                    break;
+
+                default:
                     break;
             }
         }

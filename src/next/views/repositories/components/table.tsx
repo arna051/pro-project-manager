@@ -2,7 +2,7 @@ import { IRepo } from "@electron/model/repo";
 import { Card, Chip, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { FsAvatar } from "@next/components/avatar";
 import { CloneButton, DeployButton, IDEButton, OpenFolder, PlayButton } from "@next/components/exec-button";
-import { GitButton } from "@next/components/exec-button/git";
+import { GitButton } from "@next/components/exec-button";
 import { DeleteIcon, EditIcon } from "@next/components/icons";
 import { ICONS } from "@next/constants/repo-icons";
 import Link from "next/link";

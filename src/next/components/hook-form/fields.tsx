@@ -7,6 +7,7 @@ import { RHFSelect, RHFMultiSelect } from './rhf-select';
 import { RHFCheckbox, RHFMultiCheckbox } from './rhf-checkbox';
 import RHFImage from './rhf-image';
 import { RHFMonacoCodeEditor } from './rhf-code-editor';
+import RHFFile from './rhf-file';
 
 // ----------------------------------------------------------------------
 
@@ -22,5 +23,6 @@ export const Field = {
   MultiSwitch: RHFMultiSwitch,
   MultiCheckbox: RHFMultiCheckbox,
   Image: RHFImage,
-  Code: RHFMonacoCodeEditor
+  Code: RHFMonacoCodeEditor,
+  File: RHFFile
 };

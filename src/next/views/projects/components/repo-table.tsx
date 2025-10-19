@@ -1,7 +1,7 @@
 import { IRepo } from "@electron/model/repo"
 import { Card, CardContent, CardHeader, Chip, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material"
 import { CloneButton, DeployButton, IDEButton, OpenFolder, PlayButton } from "@next/components/exec-button"
-import { GitButton } from "@next/components/exec-button/git"
+import { GitButton } from "@next/components/exec-button"
 import { AddIcon, DeployIcon, EditIcon, GitIcon, RepoIcon, VscodeIcon } from "@next/components/icons"
 import { ICONS } from "@next/constants/repo-icons"
 import Link from "next/link"

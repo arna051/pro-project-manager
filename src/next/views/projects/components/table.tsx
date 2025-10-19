@@ -5,12 +5,7 @@ import type { IProject } from "@electron/model/project";
 import { FsAvatar } from "@next/components/avatar";
 import Link from "next/link";
 
-type ProjectLike = IProject & {
-    _id: string;
-    lastCheck?: string | Date;
-    createdAt?: string | Date;
-    updatedAt?: string | Date;
-};
+type ProjectLike = IProject
 
 type ProjectsTableProps = {
     projects: ProjectLike[];
@@ -65,7 +60,7 @@ export function ProjectsTable({ projects, loading = false, onDelete }: ProjectsT
                                 const contractorCount = Array.isArray(project.contractorIds) ? project.contractorIds.length : 0;
 
                                 return (
-                                    <TableRow key={project._id} hover>
+                                    <TableRow key={`${project._id}`} hover>
                                         <TableCell align="center">{index + 1}</TableCell>
                                         <TableCell>
                                             <Stack direction="row" alignItems="center" gap={2}>
@@ -112,7 +107,7 @@ export function ProjectsTable({ projects, loading = false, onDelete }: ProjectsT
                                         <TableCell align="right">
                                             <Stack direction="row" justifyContent="flex-end" gap={0.5}>
                                                 <IconButton
-                                                    onClick={() => onDelete(project._id)}
+                                                    onClick={() => onDelete(`${project._id}`)}
                                                     size="small"
                                                     color="error"
                                                     aria-label="Delete project">

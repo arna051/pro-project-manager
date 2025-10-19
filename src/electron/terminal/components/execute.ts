@@ -1,9 +1,21 @@
-import { execSync, exec } from "child_process";
+import { exec } from "child_process";
 import os from "os";
 import path from "path";
 
-export default function execute(script: string, args: string[] = []) {
-    execSync(script.concat(" ", args.join(" ")));
+export default function execute(script: string, args: string[] = []): Promise<string> {
+    return new Promise((res, rej) => {
+        const cli = exec(script.concat(" ", args.join(" ")), (err, stdout, stderr) => {
+            clearTimeout(timeout)
+            cli.kill();
+            if (err) return res(err.message)
+            if (stderr.trim()) return res(stderr)
+            res(stdout);
+        })
+        const timeout = setTimeout(() => {
+            cli.kill();
+            res("Error: process time out!")
+        }, 1e3 * 60);
+    })
 }
 
 

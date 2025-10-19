@@ -1,13 +1,14 @@
 "use client"
 
 import { Box, IconButton, Stack, useColorScheme } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Header from "./header";
 import menuImage from "../../assets/menu.jpg"
 import Drawer from "./drawer";
 import { FleshLeftIcon, FleshRightIcon } from "components/icons";
 import useLocalStorage from "hooks/useLocalstorage";
 import TerminalProvider from "@next/terminal/provider";
+import IPCMainListener from "@next/components/main";
 
 type Props = ChildProp
 export default function SideBar({ children }: Props) {
@@ -93,9 +94,11 @@ export default function SideBar({ children }: Props) {
                         overflowY: 'scroll',
                         maxHeight: '100%',
                         position: 'relative',
-                        height: '100%'
+                        height: '100%',
+                        pb: 6
                     }}>
                         {children}
+                        {useMemo(() => <IPCMainListener />, [])}
                     </Box>
                 </TerminalProvider>
             </Box>

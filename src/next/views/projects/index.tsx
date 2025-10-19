@@ -7,13 +7,9 @@ import Search from "./components/search";
 import { ProjectsTable } from "./components/table";
 import type { IProject } from "../../../electron/model/project";
 import { toast } from "sonner";
+import { getProjects } from "@next/api/projects";
 
-type ProjectRecord = IProject & {
-    _id: string;
-    lastCheck?: string | Date;
-    createdAt?: string | Date;
-    updatedAt?: string | Date;
-};
+type ProjectRecord = IProject;
 
 export default function ProjectsView() {
     const [projects, setProjects] = useState<ProjectRecord[]>([]);
@@ -25,7 +21,7 @@ export default function ProjectsView() {
     const load = async () => {
         try {
             setLoading(true);
-            const data = await window.electron.db.find<ProjectRecord>("Project");
+            const data = await getProjects();
             setProjects(
                 data
             );

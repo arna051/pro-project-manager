@@ -9,6 +9,7 @@ import Setting from "@electron/model/settings";
 import { ipcMain } from "electron";
 import { Document, FilterQuery, Model, MongooseUpdateQueryOptions, PipelineStage, Types, UpdateQuery, UpdateWithAggregationPipeline } from "mongoose";
 import { deepParseObjectIds } from "@electron/utils/parseIds";
+import { Evidence } from "@electron/model/evidence";
 
 const Models: Record<string, Model<any, {}, {}, {}, {}, Document<Types.ObjectId>>> = {
     Project,
@@ -18,7 +19,8 @@ const Models: Record<string, Model<any, {}, {}, {}, {}, Document<Types.ObjectId>
     Contractor,
     Server,
     BashScript,
-    Setting
+    Setting,
+    Evidence
 }
 
 

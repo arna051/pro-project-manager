@@ -17,9 +17,10 @@
     "dev:tsup": "tsup --watch --config tsup.config.ts",
     "dev:next": "next dev ./src/next -p 4152 --turbopack",
     "dev:electron": "wait-on dist/main.cjs http://localhost:4152 && electron .",
-    "build": "npm run build:electron && npm run build:next",
+    "build": "rm -r out;npm run build:electron && npm run build:next",
     "build:electron": "tsup --config tsup.config.ts",
-    "build:next": "next build ./src/next && next export ./src/next",
+    "build:next": "NODE_ENV=production next build ./src/next && mv ./src/next/out ./",
+    "build:linux": "electron-builder --linux",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
@@ -28,8 +29,8 @@
     "@hookform/resolvers": "^5.2.2",
     "@monaco-editor/react": "^4.7.0",
     "@mui/lab": "^7.0.0-beta.17",
-    "@mui/material": "7.3.2",
-    "@mui/material-nextjs": "^7.3.2",
+    "@mui/material": "7.3.3",
+    "@mui/material-nextjs": "^7.3.3",
     "@tiptap/core": "^2.4.0",
     "@tiptap/extension-code-block": "^2.4.0",
     "@tiptap/extension-code-block-lowlight": "^2.4.0",
@@ -43,7 +44,8 @@
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
     "dayjs": "^1.11.18",
-    "electron-is-dev": "3.0.1",
+    "easy-llm-call": "^2.0.3",
+    "express": "^5.1.0",
     "monaco-editor": "^0.53.0",
     "mongoose": "8.18.1",
     "next": "15.5.3",
@@ -52,16 +54,21 @@
     "react-dom": "19.1.1",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.63.0",
+    "react-markdown": "^10.1.0",
     "react-simple-typewriter": "^5.0.1",
+    "react-syntax-highlighter": "^15.6.6",
     "sonner": "^2.0.7",
     "tree-kill": "^1.2.2",
     "uuid": "^13.0.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {
+    "@emnapi/runtime": "^1.5.0",
+    "@types/express": "^5.0.3",
     "@types/node": "^20.12.12",
     "@types/react": "19.1.13",
     "@types/react-dom": "19.1.9",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "concurrently": "9.2.1",
     "electron": "38.1.2",
     "electron-builder": "26.0.12",
@@ -70,19 +77,20 @@
     "wait-on": "9.0.1"
   },
   "build": {
-    "appId": "com.hippogriff.vpsmanager",
-    "productName": "VPS Manager",
-    "icon": "build/icon.png",
+    "appId": "com.hippogriff.promanager",
+    "productName": "Project Manager Pro",
+    "icon": "assets/hippogriff.png",
+    "asar": true,
     "files": [
       "dist/**",
       "out/**",
+      "assets/**",
       "build/**",
       "package.json",
       "node_modules/**"
     ],
-    "asarUnpack": true,
     "linux": {
-      "icon": "build/icon.png",
+      "icon": "assets/hippogriff.png",
       "category": "Utility",
       "target": [
         {
@@ -94,7 +102,7 @@
       ]
     },
     "win": {
-      "icon": "build/icon.png",
+      "icon": "assets/hippogriff.png",
       "target": [
         {
           "target": "nsis",

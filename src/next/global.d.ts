@@ -14,13 +14,18 @@ declare global {
     "Contractor" |
     "Server" |
     "BashScript" |
-    "Setting"
+    "Setting" |
+    "Evidence"
 
 
   interface Window {
     electron: {
       platform: NodeJS.Platform;
       versions: NodeJS.ProcessVersions;
+      browser: {
+        min: () => void,
+        exit: () => void
+      },
       db: {
         find: <T = any>(collection: ModelsNames) => Promise<T[]>
         list: <T = any>(collection: ModelsNames, pipes: PipelineStage[]) => Promise<T[]>
@@ -34,23 +39,36 @@ declare global {
         list: (limit?: number, skip?: number) => Promise<GridFSFile[]>
         get: (id: string) => Promise<{ file: GridFSFile; base64: string }>
         remove: (id: string) => Promise<boolean>
-        saveFromPath: (filePath: string, meta?: Record<string, any>) => Promise<string>
+        saveFromPath: (filePath: string, meta?: Record<string, any>, file?: File) => Promise<string>
+        onFileDrop: (callback: (paths: string[]) => void) => () => void
       }
       dialog: {
         openFile: (options?: OpenDialogOptions) => Promise<OpenDialogReturnValue>
+        confirm: (message: string) => Promise<boolean>
       },
       terminal: {
         create: () => Promise<string>
         close: (id: string) => Promise<void>
         write: (id: string, input: string) => void
-        onData: (id: string, callback: (data: string) => void) => void
+        onData: (id: string, callback: (data: string) => void) => () => void
         resize: (id: string, cols: number, rows: number) => void,
         createBash: (content: string) => Promise<string>
-        execute: (script: string, args?: string[]) => void,
+        execute: (script: string, args?: string[]) => Promise<string>,
         copyFiles: (source: string, dest: string, ignore: string[]) => void
         git: (path: string) => Promise<GitData>
       }
+      onMessage: (callback: (d: Record<string, any>) => any) => () => void
+      chat: (payload: {
+        messages: {
+          [k: string]: any;
+          role: Role;
+          content?: string;
+          name?: string;
+          tool_call_id?: string;
+        }[];
+      }) => Promise<any>
     };
+
   }
 
   type ChildProp = { children: ReactNode }

@@ -51,8 +51,10 @@ export function PlayButton({ command, size = 18, title, pwd }: Props) {
                     else toast.warning("terminal is not configured in settings")
                     break;
 
-                default:
+                case "internal":
                     create(title, `cd "${pwd}" &&  ${bash}`)
+                    break;
+                default:
                     break;
             }
         }

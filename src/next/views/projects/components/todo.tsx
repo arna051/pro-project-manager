@@ -44,13 +44,20 @@ export default function ProjectTodo({ project, reload }: { project: IProject, re
     })
 
     return <Grid container spacing={2} >
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 12 }}>
             <Form methods={methods} onSubmit={onSubmit}>
                 <Card className="glassy" sx={{ height: '100%', minHeight: 460 }}>
                     <CardHeader
                         avatar={<TodoIcon />}
                         title="Todo"
                         subheader="Add job you have to get it done!"
+                        action={<Button
+                            startIcon={<AddIcon />}
+                            variant="contained"
+                            type="submit"
+                        >
+                            Save
+                        </Button>}
                     />
                     <CardContent>
                         <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2} sx={{ mb: 2 }}>
@@ -77,15 +84,6 @@ export default function ProjectTodo({ project, reload }: { project: IProject, re
                         </Stack>
                         <Field.Editor name="task" />
                     </CardContent>
-                    <CardActions sx={{ justifyContent: 'end' }}>
-                        <Button
-                            startIcon={<AddIcon />}
-                            variant="contained"
-                            type="submit"
-                        >
-                            Save
-                        </Button>
-                    </CardActions>
                 </Card>
             </Form>
         </Grid>

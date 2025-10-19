@@ -11,6 +11,8 @@ const Provider = terminalContext.Provider
 export default function TerminalProvider({ children }: ChildProp) {
     const [terminals, setTerminals] = useState<Terminal[]>([]);
 
+    const [overall, setOverall] = useState({ tab: -1, count: -1 })
+
     async function create(name: string, initialCommand?: string): Promise<string | null> {
         try {
             const id = await window.electron.terminal.create();
@@ -23,6 +25,7 @@ export default function TerminalProvider({ children }: ChildProp) {
             return null
         }
     };
+
 
     async function close(id: string) {
         try {
@@ -38,8 +41,13 @@ export default function TerminalProvider({ children }: ChildProp) {
         }
     };
 
+    function send(id: string, cmd: string) {
+        window.electron.terminal.write(id, cmd);
+        setOverall({ tab: terminals.length, count: overall.count + 1 })
+    }
+
     return <Provider
-        value={{ create }}
+        value={{ create, terminals, send }}
     >
         {
             children
@@ -48,6 +56,7 @@ export default function TerminalProvider({ children }: ChildProp) {
             terminals={terminals}
             create={create}
             close={close}
+            over={overall}
         />
     </Provider>
 }

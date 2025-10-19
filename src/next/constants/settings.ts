@@ -5,5 +5,6 @@ export const SETTINGS = {
     backgrounds: "backgrounds",
     fileBrowser: "file-browser",
     internetBrowser: "internet-browser",
-    ide: "ide"
+    ide: "ide",
+    deepseek: "deepseek"
 }

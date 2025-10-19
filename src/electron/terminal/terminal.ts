@@ -15,12 +15,12 @@ export class TerminalKeeper {
 
             const shell = this.terminals[id]
             if (shell) {
-                shell.write(input.replace(/\r/g, "\n"));
+                shell.write(input);
             }
         });
 
-        ipcMain.on("execute", (_, script: string, args: string[]) => {
-            execute(script, args)
+        ipcMain.handle("execute", async (_, script: string, args: string[]) => {
+            return await execute(script, args)
         })
         ipcMain.on("copy-files", (_, source: string, dest: string, ignore: string[]) => {
             copyFiles(source, dest, ignore)

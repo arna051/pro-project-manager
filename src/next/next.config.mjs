@@ -8,6 +8,7 @@ const nextConfig = {
   trailingSlash: true,
   // Disable image optimization to avoid /_next/image requests
   images: { unoptimized: true },
+
   reactStrictMode: true,
 };
 

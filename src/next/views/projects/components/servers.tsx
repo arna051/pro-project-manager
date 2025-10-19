@@ -1,5 +1,6 @@
 import { IServer } from "@electron/model/server";
 import { Button, Card, CardContent, CardHeader, IconButton, List, ListItem, ListItemText, Stack, Typography } from "@mui/material";
+import RunButton from "@next/components/exec-button/run";
 import { AddIcon, DeleteIcon, ServerIcon, TerminalIcon } from "@next/components/icons";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -46,9 +47,11 @@ export default function ProjectServer({ servers, projectId, reload }: { servers?
                                         <IconButton size="small" onClick={() => removeServerFromProject(`${x._id}`)}>
                                             <DeleteIcon width={18} height={18} />
                                         </IconButton>
-                                        <IconButton size="small">
-                                            <TerminalIcon width={18} height={18} />
-                                        </IconButton>
+
+                                        <RunButton
+                                            command={`ssh ${x.user}@${x.host} -p ${x.port}`}
+                                            title={x.title}
+                                        />
                                     </Stack>
                                 }
                             >

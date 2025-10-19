@@ -60,7 +60,6 @@ export default function RHFSingle({ name, icon }: Props) {
                 {icon || <AddIcon />}
                 <InputBase
                     fullWidth
-                    placeholder="Category Name"
                     sx={{
                         p: 1
                     }}

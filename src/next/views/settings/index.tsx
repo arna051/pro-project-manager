@@ -7,6 +7,7 @@ import BackgroundSettings from "./components/backgrounds";
 import FileBrowserSettings from "./components/file-browser";
 import InternetBrowserSettings from "./components/internet-browser";
 import IDESettings from "./components/ide";
+import DeepseekSettings from "./components/deepseek";
 
 export default function SettingsView() {
     return <Box sx={{ position: 'relative', p: 2, pt: 6 }}>
@@ -18,6 +19,7 @@ export default function SettingsView() {
             <FileBrowserSettings />
             <InternetBrowserSettings />
             <IDESettings />
+            <DeepseekSettings />
             <BackgroundSettings />
         </Stack>
     </Box>

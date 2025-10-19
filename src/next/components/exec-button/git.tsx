@@ -37,8 +37,11 @@ export function GitButton({ path, size = 18, title }: Props) {
                     create(title, `proxychains4 ${await window.electron.terminal.createBash(pull)}`)
                     break;
 
-                default:
+                case "push":
                     create(title, push)
+                    break;
+
+                default:
                     break;
             }
         }

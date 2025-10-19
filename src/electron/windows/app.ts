@@ -1,8 +1,10 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, ipcMain, app } from "electron";
 import path from 'node:path';
-import isDev from 'electron-is-dev';
 
+export const isDev = !app.isPackaged;
+export let main: null | BrowserWindow = null;
 export const createMainWindow = () => {
+    if (main) return main.show()
     const mainWindow = new BrowserWindow({
         width: 1300,
         height: 800,
@@ -11,10 +13,14 @@ export const createMainWindow = () => {
         show: false,
         transparent: true,
         frame: false,
+        icon: path.join(__dirname, '../assets/hippogriff.png'),
         webPreferences: {
             preload: path.join(__dirname, 'preload.cjs'),
             contextIsolation: true,
             nodeIntegration: false,
+            sandbox: false,          // 👈 important
+            webSecurity: false,      // 👈 allows access to .path
+
         },
     });
 
@@ -28,12 +34,23 @@ export const createMainWindow = () => {
             mainWindow.loadURL(devServerURL);
             mainWindow.webContents.openDevTools({ mode: 'detach' });
         } else {
-            const indexHtml = path.join(__dirname, '../out/index.html');
-            mainWindow.loadFile(indexHtml);
+            const indexUrl = 'app://-/index.html';
+            mainWindow.loadURL(indexUrl);
         }
     })();
 
     mainWindow.setMenu(null)
 
+    main = mainWindow
+
     return mainWindow
 };
+
+
+ipcMain.on("exit", () => {
+    main?.hide();
+})
+
+ipcMain.on("minimize", () => {
+    main?.minimize()
+})

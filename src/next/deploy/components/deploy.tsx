@@ -7,6 +7,7 @@ import { DeployIcon, DurationIcon, SelectIcon } from "@next/components/icons";
 import { toast } from "sonner";
 import { IServer } from "@electron/model/server";
 import { TimeDiff } from "@next/utils/time";
+import say from "@next/utils/say";
 
 
 let timeout: any = null
@@ -69,9 +70,12 @@ export default function Deploy({ deploy, changeDeploy, close }: { deploy: Deploy
 
                 if (!server) continue;
 
-                const bashScript = deployScript.script.replace(/\$1/g, `${server.user}@${server.host} -p ${server.port}`);
+                const bashScript = deployScript
+                    .script
+                    .replace(/\$1/g, `${server.user}@${server.host}`)
+                    .replace(/\$2/g, `${server.port}`);
 
-                bash.push(task(`Deploy on ${server.title} - [${server.user}@${server.host} -p ${server.port}]`));
+                bash.push(task(`Deploy on ${server.title} - [${server.user}@${server.host}]`));
                 bash.push(bashScript);
                 bash.push(task(`Deployed on ${server.title}`));
             }
@@ -123,7 +127,7 @@ export default function Deploy({ deploy, changeDeploy, close }: { deploy: Deploy
             const taskDone = getTask(data);
             if (taskDone) setTasks(last => {
                 if (last.some(x => x === taskDone)) return last;
-
+                say(taskDone)
                 return [...last, taskDone]
             })
         });

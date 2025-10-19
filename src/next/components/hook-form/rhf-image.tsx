@@ -1,6 +1,5 @@
 import { alpha, Box, Button, LinearProgress, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
 import { Controller, useFormContext } from "react-hook-form"
 import { FsAvatar } from "../avatar";
 import { toast } from "sonner";
@@ -25,28 +24,39 @@ export default function RHFImage({ name = 'image' }: Props) {
             const [imageError, setImageError] = useState<string | null>(null);
             const [isUploadingImage, setIsUploadingImage] = useState(false);
             const [open, setOpen] = useState(false);
+            const [isDragging, setIsDragging] = useState(false);
 
-            const { getRootProps, getInputProps, isDragActive } = useDropzone({
-                noClick: true,
-                noKeyboard: true,
-                multiple: false,
-                accept: { "image/*": [] },
-                useFsAccessApi: false,
-                onDropAccepted: async (acceptedFiles) => {
-                    if (!acceptedFiles.length) {
-                        return;
-                    }
-                    await handleUploadFromFile(acceptedFiles[0]);
-                },
-                onDropRejected: () => {
-                    setImageError("Only image files are supported.");
-                },
-            });
+            useEffect(() => {
+                window.electron.gridfs.onFileDrop((files) => {
+                    setIsDragging(false);
 
-            const handleUploadFromFile = async (file: File) => {
+                    handleUploadFromFile(files[0]); // send to main process
+                    console.log("Dropped files:", files);
+                })
+
+                const handleDragOver = (e: DragEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDragging(true);
+                };
+
+                const handleDragLeave = (e: DragEvent) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setIsDragging(false);
+                };
+
+                window.addEventListener("dragover", handleDragOver);
+                window.addEventListener("dragleave", handleDragLeave);
+
+                return () => {
+                    window.removeEventListener("dragover", handleDragOver);
+                    window.removeEventListener("dragleave", handleDragLeave);
+                };
+            }, []);
+            const handleUploadFromFile = async (filePath: string) => {
                 setImageError(null);
                 setIsUploadingImage(true);
-                const filePath = (file as File & { path?: string }).path;
 
                 if (!filePath) {
                     setIsUploadingImage(false);
@@ -56,11 +66,12 @@ export default function RHFImage({ name = 'image' }: Props) {
 
 
                 try {
-                    const uploaded = await window.electron.gridfs.saveFromPath(filePath, {
-                        source: "dropzone",
-                        size: file.size,
-                        lastModified: file.lastModified,
-                    });
+                    const uploaded = await window.electron.gridfs.saveFromPath(
+                        filePath,
+                        {
+                            source: "dropzone"
+                        }
+                    );
                     if (!uploaded) {
                         throw new Error("File upload failed");
                     }
@@ -113,7 +124,6 @@ export default function RHFImage({ name = 'image' }: Props) {
                 toast.error(imageError)
             }, [imageError])
             return <Box
-                {...getRootProps()}
                 sx={(theme) => ({
                     position: "relative",
                     minHeight: 240,
@@ -126,14 +136,13 @@ export default function RHFImage({ name = 'image' }: Props) {
                     justifyContent: "center",
                     cursor: "pointer",
                     transition: "border-color 0.2s ease, box-shadow 0.2s ease",
-                    ...(isDragActive && {
+                    ...(isDragging && {
                         borderColor: theme.palette.primary.main,
                         boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.16)}`,
                     }),
                 })}
             >
                 {isUploadingImage && <LinearProgress />}
-                <input {...getInputProps()} />
                 {field.value ? (
                     <FsAvatar
                         variant="square"

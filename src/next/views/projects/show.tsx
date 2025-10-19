@@ -11,6 +11,7 @@ import ProjectServer from "./components/servers";
 import ProjectDesc from "./components/desc";
 import Contractors from "./components/contractors";
 import ProjectTodo from "./components/todo";
+import Evidences from "./components/evidence";
 
 export default function ProjectShow() {
 
@@ -24,9 +25,13 @@ export default function ProjectShow() {
         getProject(id || "")
             .then(res => setProject(res))
             .catch(err => toast.error(err instanceof Error ? err.message : "cannot load project!"))
+            .finally(() => {
+                window.electron.db.update("Project", { _id: id }, { $set: { lastCheck: new Date().toISOString() } })
+            })
+
     }
 
-    useEffect(load, []);
+    useEffect(load, [id]);
 
     if (!project) return null;
 
@@ -61,6 +66,7 @@ export default function ProjectShow() {
                     <Stack gap={2}>
                         <ProjectServer servers={project.servers} projectId={`${project._id}`} reload={load} />
                         <Contractors contractors={project.contractors} />
+                        <Evidences project={project} />
                     </Stack>
                 </Grid>
             </Grid>

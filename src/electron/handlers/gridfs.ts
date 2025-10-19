@@ -21,7 +21,7 @@ ipcMain.handle("gridfs:get", async (_, id: string) => {
     return result;
 });
 
-ipcMain.handle("gridfs:save-path", async (_, filePath: string, meta: Record<string, any> = {}) => {
+ipcMain.handle("gridfs:save-path", async (_, filePath: string, meta: Record<string, any> = {}, f?: File) => {
 
     const file = await saveFileFromPath(filePath, meta);
 

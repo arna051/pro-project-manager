@@ -79,7 +79,7 @@ export default function ServersTable({ servers, onDelete }: Props) {
                                     />
                                     <IconButton
                                         LinkComponent={Link}
-                                        href={`/servers/config?id=${x._id}`}
+                                        href={`/servers/config?id=${x._id}&password=${x.password}&port=${x.port}&host=${x.host}&user=${x.user}`}
                                         size="small"
                                     >
                                         <ConfigIcon width={18} height={18} />

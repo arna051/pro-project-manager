@@ -9,3 +9,5 @@ export * from "./clone";
 export * from "./deploy";
 
 export * from "./play";
+
+export * from "./git";
