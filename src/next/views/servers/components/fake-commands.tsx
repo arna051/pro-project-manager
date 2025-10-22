@@ -1,6 +1,7 @@
 import React from "react";
 import { Typewriter } from "react-simple-typewriter";
 import { Box, Paper } from "@mui/material";
+import { IServer } from "@electron/model/server";
 
 export default function FakeServerTerminal() {
     return (
@@ -78,6 +79,40 @@ Build completed successfully!`,
 
 nginx is running normally with no errors detected.`]}
                     loop={1}
+                    cursor
+                    cursorStyle="█"
+                    typeSpeed={25}
+                    deleteSpeed={5}
+                    delaySpeed={3000}
+                />
+            </Box>
+        </Paper>
+    );
+}
+
+
+export function ServerAnimation({ servers }: { servers: IServer[] }) {
+    return (
+        <Paper
+            elevation={6}
+            sx={{
+                bgcolor: "black",
+                color: "#00ff66",
+                fontFamily: "monospace",
+                p: 2,
+                borderRadius: 2,
+                width: '100%',
+                mx: "auto",
+                fontSize: 11,
+                minHeight: 100
+            }}
+        >
+            <Box sx={{ whiteSpace: "pre-wrap" }}>
+                <Typewriter
+                    words={
+                        servers.map(x => `Server Name: ${x.title}\nHost: ${x.host}\nUser: ${x.user}`)
+                    }
+                    loop={0}
                     cursor
                     cursorStyle="█"
                     typeSpeed={25}

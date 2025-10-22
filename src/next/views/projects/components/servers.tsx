@@ -5,7 +5,7 @@ import { AddIcon, DeleteIcon, ServerIcon, TerminalIcon } from "@next/components/
 import Link from "next/link";
 import { toast } from "sonner";
 
-export default function ProjectServer({ servers, projectId, reload }: { servers?: IServer[], projectId: string, reload: VoidFunction }) {
+export default function ProjectServer({ servers, projectId, reload }: { servers?: IServer[], projectId?: string, reload?: VoidFunction }) {
     async function removeServerFromProject(serverId: string) {
         try {
             await window.electron.db.update("Project", { _id: projectId }, { $pull: { serversIds: serverId } });
@@ -17,14 +17,14 @@ export default function ProjectServer({ servers, projectId, reload }: { servers?
                     Undo
                 </Button>
             })
-            reload();
+            reload?.();
         }
         catch (err) {
             toast.error(err instanceof Error ? err.message : "operation failed!")
         }
     }
     return <Card className="glassy">
-        <CardHeader
+        {!!projectId && <CardHeader
             avatar={<ServerIcon />}
             title="Servers"
             subheader="linked server to this project."
@@ -34,7 +34,7 @@ export default function ProjectServer({ servers, projectId, reload }: { servers?
             >
                 <AddIcon />
             </IconButton>}
-        />
+        />}
         <CardContent>
             {
                 !!servers?.length ?
@@ -44,9 +44,9 @@ export default function ProjectServer({ servers, projectId, reload }: { servers?
                                 key={`${x._id}`}
                                 secondaryAction={
                                     <Stack direction="row">
-                                        <IconButton size="small" onClick={() => removeServerFromProject(`${x._id}`)}>
+                                        {!!projectId && <IconButton size="small" onClick={() => removeServerFromProject(`${x._id}`)}>
                                             <DeleteIcon width={18} height={18} />
-                                        </IconButton>
+                                        </IconButton>}
 
                                         <RunButton
                                             command={`ssh ${x.user}@${x.host} -p ${x.port}`}

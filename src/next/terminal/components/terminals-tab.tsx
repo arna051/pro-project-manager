@@ -58,6 +58,7 @@ export default function
                 bottom: 0,
                 left: 0,
                 right: 0,
+                zIndex: 3
             }}>
             <TabContext value={value}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>

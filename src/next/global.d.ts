@@ -3,6 +3,7 @@ import type { GridFSFile } from "mongodb";
 import type { OpenDialogOptions, OpenDialogReturnValue } from "electron";
 import type { ReactNode } from "react";
 import type { GitData } from "@electron/terminal/components/git"
+import type { SSHConfig } from "@electron/ssh/components/execute"
 
 export { };
 
@@ -15,7 +16,8 @@ declare global {
     "Server" |
     "BashScript" |
     "Setting" |
-    "Evidence"
+    "Evidence" |
+    "Reminder"
 
 
   interface Window {
@@ -66,7 +68,11 @@ declare global {
           name?: string;
           tool_call_id?: string;
         }[];
-      }) => Promise<any>
+      }) => Promise<any>,
+      ssh: {
+        run: (cfg: SSHConfig,
+          command: string) => Promise<string>
+      }
     };
 
   }

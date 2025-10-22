@@ -51,7 +51,7 @@ export default function DashboardView() {
     }, []);
 
 
-    return <Box sx={{ p: 2, pt: 6 }}>
+    return <Box sx={{ position: 'relative', zIndex: 1 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Stack direction="row" alignItems="center" gap={2}>
                 <Box sx={{

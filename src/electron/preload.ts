@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron';
 import type { OpenDialogOptions } from 'electron';
 import { MongooseUpdateQueryOptions, PipelineStage } from 'mongoose';
+import { SSHConfig } from './ssh/components/execute';
 
 contextBridge.exposeInMainWorld('electron', {
   platform: process.platform,
@@ -88,7 +89,12 @@ contextBridge.exposeInMainWorld('electron', {
       [k: string]: any;
     }>;
   }
-  ) => ipcRenderer.invoke("llm:chat", payload)
+  ) => ipcRenderer.invoke("llm:chat", payload),
+
+  ssh: {
+    run: (cfg: SSHConfig,
+      command: string,) => ipcRenderer.invoke('ssh:execute', cfg, command)
+  }
 });
 
 

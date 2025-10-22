@@ -14,6 +14,8 @@ type Props = {
     images?: string[]
 
     opacity?: number
+
+    isNotFs?: boolean
 }
 
 function loadImages() {
@@ -21,14 +23,16 @@ function loadImages() {
     const images = localStorage.getItem(SETTINGS.backgrounds) ? JSON.parse(localStorage.getItem(SETTINGS.backgrounds) || "[]") : [];
     return images.length ? images : [img1.src, img2.src, img3.src]
 }
-function isFsGrid() {
-    if (typeof window === 'undefined') return false
-    const images = localStorage.getItem(SETTINGS.backgrounds) ? JSON.parse(localStorage.getItem(SETTINGS.backgrounds) || "[]") : [];
-    return !!images.length
-}
-export default function BGFade({ height, images = loadImages(), opacity = .5 }: Props) {
+export default function BGFade({ height, images = loadImages(), opacity = .7, isNotFs }: Props) {
     const [step, setStep] = useState(images.length - 1);
 
+
+    function isFsGrid() {
+        if (isNotFs) return false;
+        if (typeof window === 'undefined') return false
+        const images = localStorage.getItem(SETTINGS.backgrounds) ? JSON.parse(localStorage.getItem(SETTINGS.backgrounds) || "[]") : [];
+        return !!images.length
+    }
     useEffect(() => {
         const interval = setInterval(() => {
             setStep(x => x === images.length - 1 ? 0 : x + 1)

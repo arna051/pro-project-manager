@@ -3,7 +3,7 @@ import { createMainWindow } from './windows/app';
 import "./model";
 import "./handlers";
 import "./terminal"
-import "./utils/chat"
+import "./ssh"
 import { TracyRender } from './utils/tray';
 import path, { join } from 'path';
 import { existsSync } from 'fs';

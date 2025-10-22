@@ -61,8 +61,6 @@ const projectSchema = new Schema<IProject>({
     },
     image: {
         type: String,
-        required: true,
-        trim: true
     },
     priority: {
         type: Number,

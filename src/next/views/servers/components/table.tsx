@@ -7,8 +7,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 
-type Props = { servers: IServer[], onDelete: (id: string) => any, }
-export default function ServersTable({ servers, onDelete }: Props) {
+type Props = { servers: IServer[], onDelete: (id: string) => any, onConfig: (id: string) => any }
+export default function ServersTable({ servers, onDelete, onConfig }: Props) {
 
     const params = useSearchParams();
 
@@ -78,8 +78,7 @@ export default function ServersTable({ servers, onDelete }: Props) {
                                         title={x.title}
                                     />
                                     <IconButton
-                                        LinkComponent={Link}
-                                        href={`/servers/config?id=${x._id}&password=${x.password}&port=${x.port}&host=${x.host}&user=${x.user}`}
+                                        onClick={() => onConfig(x._id.toString())}
                                         size="small"
                                     >
                                         <ConfigIcon width={18} height={18} />
